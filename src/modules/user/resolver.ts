@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { Service } from "typedi";
 
-import { User } from "../../entities";
+import { User, UsersPayload } from "../../entities";
 import { CreateUserInput, FilterUserInput } from "./input";
 import UserService from "./service";
 
@@ -12,19 +12,19 @@ export default class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @Query(() => User)
-  async getUser(@Arg("id") id: ObjectId) {
+  async getUser(@Arg("id") id: ObjectId): Promise<User | null> {
     const user = await this.userService.getById(id);
 
     return user;
   }
 
-  @Query(() => [User] || [])
+  @Query(() => UsersPayload)
   async getUsers(
     @Arg("filterUserData") filterUserData: FilterUserInput
-  ): Promise<User[] | []> {
-    const users = await this.userService.getAll(filterUserData);
+  ): Promise<UsersPayload> {
+    const payload = await this.userService.getAll(filterUserData);
 
-    return users;
+    return payload;
   }
 
   @Mutation(() => User)

@@ -2,7 +2,7 @@ import { Service } from "typedi";
 import { ObjectId } from "mongodb";
 
 import UserModel from "./model";
-import { User } from "../../entities";
+import { User, UsersPayload } from "../../entities";
 import { CreateUserInput, FilterUserInput } from "./input";
 
 @Service()
@@ -13,7 +13,7 @@ export default class UserService {
     return this.userModel.getById(_id);
   }
 
-  public async getAll(data: FilterUserInput): Promise<User[] | []> {
+  public async getAll(data: FilterUserInput): Promise<UsersPayload> {
     return this.userModel.getAll(data);
   }
 

@@ -1,25 +1,40 @@
 import { ObjectId } from "mongodb";
 import { Service } from "typedi";
 
-import { User, UserMongooseModel } from "../../entities";
+import { User, UserMongooseModel, UsersPayload } from "../../entities";
+import { encryptPassword } from "../../helpers/auth.helpers";
 import { CreateUserInput, FilterUserInput } from "./input";
-
-// This generates the mongoose model for us
 
 @Service()
 export default class UserModel {
   async getById(_id: ObjectId): Promise<User | null> {
-    // Use mongoose as usual
     return UserMongooseModel.findById(_id).lean().exec();
   }
 
-  async getAll(data: FilterUserInput): Promise<User[] | []> {
+  async getAll(data: FilterUserInput): Promise<UsersPayload> {
     // Use mongoose as usual
-    return UserMongooseModel.find().lean().exec();
+    const { page, pageSize, ...rest } = data;
+
+    const query: Record<string, object> = {};
+    let key: keyof typeof rest;
+    for (key in rest) {
+      query[key] = {
+        $regex: new RegExp(rest[key], "i"),
+      };
+    }
+    const total = await UserMongooseModel.find(query).count();
+
+    const users = await UserMongooseModel.find(query)
+      .skip((page - 1) * pageSize)
+      .limit(+pageSize);
+
+    return { users, total };
   }
 
   async create(data: CreateUserInput): Promise<User> {
-    const user = new UserMongooseModel(data);
+    const { password, ...rest } = data;
+    const hashedPassword = await encryptPassword(password);
+    const user = new UserMongooseModel({ password: hashedPassword, ...rest });
 
     return user.save();
   }
