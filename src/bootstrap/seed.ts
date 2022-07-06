@@ -1,6 +1,6 @@
 import { connection } from "mongoose";
 import { encryptPassword } from "../helpers/auth.helpers";
-import mongooseLoader from "../bootstrap/loaders/mongoose";
+import mongooseLoader from "./loaders/mongoose";
 import { User, UserMongooseModel } from "../entities";
 
 const seed = async () => {

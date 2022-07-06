@@ -1,6 +1,6 @@
 import { IsEmail, Length, MinLength } from "class-validator";
-import { Field, InputType, Int } from "type-graphql";
-import { Role } from "../../entities";
+import { Field, ObjectType, InputType, Int } from "type-graphql";
+import { Role, User } from "../../entities";
 
 @InputType()
 export class CreateUserInput {
@@ -43,4 +43,31 @@ export class FilterUserInput {
 
   @Field(() => Int)
   pageSize: number;
+}
+
+@InputType()
+export class LoginInput {
+  @Field(() => String, { nullable: false })
+  email: string;
+
+  @Field(() => String, { nullable: false })
+  password: string;
+}
+
+@ObjectType()
+export class UsersPayload {
+  @Field(() => [User])
+  users: User[];
+
+  @Field(() => Int)
+  total: number;
+}
+
+@ObjectType()
+export class UserPayload {
+  @Field(() => User)
+  user: User;
+
+  @Field(() => String)
+  token: string;
 }

@@ -1,7 +1,7 @@
-import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
+import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import { IsEmail, Length, MinLength } from "class-validator";
 import { ObjectId } from "mongodb";
-import { Field, Int, ObjectType, registerEnumType } from "type-graphql";
+import { Field, ObjectType, registerEnumType } from "type-graphql";
 
 export enum Role {
   MANAGER = "manager",
@@ -58,15 +58,6 @@ export class User {
   @Field()
   @prop({ default: false })
   isDeleted: boolean;
-}
-
-@ObjectType()
-export class UsersPayload {
-  @Field(() => [User])
-  users: User[];
-
-  @Field(() => Int)
-  total: number;
 }
 
 export const UserMongooseModel = getModelForClass(User);

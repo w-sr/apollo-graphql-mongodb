@@ -1,14 +1,18 @@
 import { ObjectId } from "mongodb";
 import { Service } from "typedi";
 
-import { User, UserMongooseModel, UsersPayload } from "../../entities";
+import { User, UserMongooseModel } from "../../entities";
 import { encryptPassword } from "../../helpers/auth.helpers";
-import { CreateUserInput, FilterUserInput } from "./input";
+import { CreateUserInput, FilterUserInput, UsersPayload } from "./input";
 
 @Service()
 export default class UserModel {
   async getById(_id: ObjectId): Promise<User | null> {
     return UserMongooseModel.findById(_id).lean().exec();
+  }
+
+  async getByEmail(email: string): Promise<User | null> {
+    return UserMongooseModel.findOne({ email }).lean().exec();
   }
 
   async getAll(data: FilterUserInput): Promise<UsersPayload> {
