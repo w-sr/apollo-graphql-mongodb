@@ -2,7 +2,7 @@ import { ApolloServer } from "apollo-server-express";
 import { ObjectId } from "mongodb";
 import { buildSchema } from "type-graphql";
 import Container from "typedi";
-import { authChecker } from "../../middlewares/auth.middleware";
+import { authChecker, getUser } from "../../middlewares/auth.middleware";
 import { resolvers } from "../../modules";
 import { ObjectIdScalar } from "../../utils/scalars";
 
@@ -17,9 +17,16 @@ export default async () => {
 
   return new ApolloServer({
     schema,
-    introspection: false,
+    introspection: true,
     context: async ({ req }) => {
-      console.log("req", req.body);
+      const token = req.headers.authorization || "";
+      if (!token) return null;
+      const user = await getUser(token);
+      return { user };
+    },
+    formatError: (error) => {
+      console.log("error", error);
+      return error;
     },
   });
 };

@@ -32,31 +32,31 @@ export class User {
   readonly _id!: ObjectId;
 
   @Field(() => String)
-  @prop({ required: true })
+  @prop({ type: () => String, required: true })
   @Length(1, 50)
   firstName: string;
 
   @Field(() => String)
   @Length(1, 50)
-  @prop({ required: true })
+  @prop({ type: () => String, required: true })
   lastName: string;
 
   @Field(() => String)
   @IsEmail()
-  @prop({ required: true, unique: true })
+  @prop({ type: () => String, required: true, unique: true })
   email: string;
 
   @Field(() => String)
   @MinLength(8)
-  @prop({ required: true })
+  @prop({ type: () => String, required: true })
   password: string;
 
   @Field(() => Role)
-  @prop({ enum: Role, required: true })
+  @prop({ type: () => String, enum: Role, required: true })
   role: Role;
 
   @Field()
-  @prop({ default: false })
+  @prop({ type: () => Boolean, default: false })
   isDeleted: boolean;
 }
 

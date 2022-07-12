@@ -7,6 +7,7 @@ import {
   CreateUserInput,
   FilterUserInput,
   LoginInput,
+  UpdateUserInput,
   UserPayload,
   UsersPayload,
 } from "./input";
@@ -40,5 +41,18 @@ export default class UserService {
   public async addUser(data: CreateUserInput): Promise<User> {
     const newUser = await this.userModel.create(data);
     return newUser;
+  }
+
+  public async updateUser(
+    _id: string,
+    data: UpdateUserInput
+  ): Promise<User | null> {
+    const updatedUser = await this.userModel.update(_id, data);
+    return updatedUser;
+  }
+
+  public async deleteUser(_id: string): Promise<User | null> {
+    const deletedUser = await this.userModel.delete(_id);
+    return deletedUser;
   }
 }

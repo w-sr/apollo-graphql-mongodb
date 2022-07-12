@@ -1,9 +1,15 @@
+import { ApolloError } from "apollo-server-express";
 import { ObjectId } from "mongodb";
 import { Service } from "typedi";
 
 import { User, UserMongooseModel } from "../../entities";
 import { encryptPassword } from "../../helpers/auth.helpers";
-import { CreateUserInput, FilterUserInput, UsersPayload } from "./input";
+import {
+  CreateUserInput,
+  FilterUserInput,
+  UpdateUserInput,
+  UsersPayload,
+} from "./input";
 
 @Service()
 export default class UserModel {
@@ -16,7 +22,6 @@ export default class UserModel {
   }
 
   async getAll(data: FilterUserInput): Promise<UsersPayload> {
-    // Use mongoose as usual
     const { page, pageSize, ...rest } = data;
 
     const query: Record<string, object> = {};
@@ -41,5 +46,39 @@ export default class UserModel {
     const user = new UserMongooseModel({ password: hashedPassword, ...rest });
 
     return user.save();
+  }
+
+  async update(_id: string, data: UpdateUserInput): Promise<User | null> {
+    const user = await UserMongooseModel.findById(_id);
+
+    if (!user) {
+      throw new ApolloError("User not found");
+    }
+
+    if (data.email && user.email !== data.email) {
+      const existingUser = await UserMongooseModel.findOne({
+        email: data.email,
+      });
+      if (existingUser) {
+        throw new ApolloError("User already existed");
+      }
+    }
+
+    const updatedUser = await UserMongooseModel.findOneAndUpdate(
+      {
+        _id,
+      },
+      data,
+      { new: true }
+    );
+
+    return updatedUser;
+  }
+
+  async delete(_id: string): Promise<User | null> {
+    const deletedUser = await UserMongooseModel.findByIdAndUpdate(_id, {
+      isDeleted: true,
+    });
+    return deletedUser;
   }
 }

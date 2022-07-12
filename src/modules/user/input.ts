@@ -25,6 +25,24 @@ export class CreateUserInput {
 }
 
 @InputType()
+export class UpdateUserInput {
+  @Field(() => String, { nullable: true })
+  @Length(1, 50)
+  firstName: string;
+
+  @Field(() => String, { nullable: true })
+  @Length(1, 50)
+  lastName: string;
+
+  @Field(() => String, { nullable: true })
+  @IsEmail()
+  email: string;
+
+  @Field(() => Role, { nullable: true })
+  role: Role;
+}
+
+@InputType()
 export class FilterUserInput {
   @Field(() => String, { nullable: true })
   firstName: string;
