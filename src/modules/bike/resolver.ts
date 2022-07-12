@@ -4,7 +4,12 @@ import { Service } from "typedi";
 
 import { Bike } from "../../entities";
 import { Role } from "../../entities/user";
-import { CreateBikeInput, FilterBikeInput, BikesPayload } from "./input";
+import {
+  CreateBikeInput,
+  FilterBikeInput,
+  BikesPayload,
+  UpdateBikeInput,
+} from "./input";
 import BikeService from "./service";
 
 @Service()
@@ -14,9 +19,8 @@ export default class BikeResolver {
 
   @Query(() => Bike)
   @Authorized()
-  async getBike(@Arg("id") id: ObjectId): Promise<Bike | null> {
-    const bike = await this.bikeService.getById(id);
-
+  async getBike(@Arg("_id") _id: ObjectId): Promise<Bike | null> {
+    const bike = await this.bikeService.getById(_id);
     return bike;
   }
 
@@ -26,7 +30,6 @@ export default class BikeResolver {
     @Arg("filterBikeData") filterBikeData: FilterBikeInput
   ): Promise<BikesPayload> {
     const payload = await this.bikeService.getAll(filterBikeData);
-
     return payload;
   }
 
@@ -35,7 +38,17 @@ export default class BikeResolver {
   async createBike(
     @Arg("createBikeData") createBikeData: CreateBikeInput
   ): Promise<Bike> {
-    const Bike = await this.bikeService.addBike(createBikeData);
-    return Bike;
+    const bike = await this.bikeService.create(createBikeData);
+    return bike;
+  }
+
+  @Mutation(() => Bike)
+  @Authorized([Role.MANAGER])
+  async updateBike(
+    @Arg("_id") _id: ObjectId,
+    @Arg("updateBikeData") updateBikeData: UpdateBikeInput
+  ): Promise<Bike | null> {
+    const bike = await this.bikeService.update(_id, updateBikeData);
+    return bike;
   }
 }

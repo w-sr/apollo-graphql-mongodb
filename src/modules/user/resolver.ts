@@ -29,8 +29,8 @@ export default class UserResolver {
 
   @Query(() => User)
   @Authorized()
-  async getUser(@Arg("id") id: ObjectId): Promise<User | null> {
-    const user = await this.userService.getById(id);
+  async getUser(@Arg("_id") _id: ObjectId): Promise<User | null> {
+    const user = await this.userService.getById(_id);
 
     return user;
   }
@@ -50,24 +50,24 @@ export default class UserResolver {
   async createUser(
     @Arg("createUserData") createUserData: CreateUserInput
   ): Promise<User> {
-    const user = await this.userService.addUser(createUserData);
+    const user = await this.userService.create(createUserData);
     return user;
   }
 
   @Mutation(() => User)
   @Authorized([Role.MANAGER])
   async updateUser(
-    @Arg("_id") _id: string,
+    @Arg("_id") _id: ObjectId,
     @Arg("updateUserData") updateUserData: UpdateUserInput
   ): Promise<User | null> {
-    const user = await this.userService.updateUser(_id, updateUserData);
+    const user = await this.userService.update(_id, updateUserData);
     return user;
   }
 
   @Mutation(() => User)
   @Authorized([Role.MANAGER])
-  async deleteUser(@Arg("_id") _id: string): Promise<User | null> {
-    const user = await this.userService.deleteUser(_id);
+  async deleteUser(@Arg("_id") _id: ObjectId): Promise<User | null> {
+    const user = await this.userService.delete(_id);
     return user;
   }
 }

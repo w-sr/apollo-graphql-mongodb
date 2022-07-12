@@ -48,7 +48,7 @@ export default class UserModel {
     return user.save();
   }
 
-  async update(_id: string, data: UpdateUserInput): Promise<User | null> {
+  async update(_id: ObjectId, data: UpdateUserInput): Promise<User | null> {
     const user = await UserMongooseModel.findById(_id);
 
     if (!user) {
@@ -75,7 +75,7 @@ export default class UserModel {
     return updatedUser;
   }
 
-  async delete(_id: string): Promise<User | null> {
+  async delete(_id: ObjectId): Promise<User | null> {
     const deletedUser = await UserMongooseModel.findByIdAndUpdate(_id, {
       isDeleted: true,
     });

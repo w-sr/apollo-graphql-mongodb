@@ -2,7 +2,12 @@ import { ObjectId } from "mongodb";
 import { Service } from "typedi";
 
 import { Bike } from "../../entities";
-import { BikesPayload, CreateBikeInput, FilterBikeInput } from "./input";
+import {
+  BikesPayload,
+  CreateBikeInput,
+  FilterBikeInput,
+  UpdateBikeInput,
+} from "./input";
 import BikeModel from "./model";
 
 @Service()
@@ -17,8 +22,16 @@ export default class BikeService {
     return this.bikeModel.getAll(data);
   }
 
-  public async addBike(data: CreateBikeInput): Promise<Bike> {
+  public async create(data: CreateBikeInput): Promise<Bike> {
     const newBike = await this.bikeModel.create(data);
+    return newBike;
+  }
+
+  public async update(
+    _id: ObjectId,
+    data: UpdateBikeInput
+  ): Promise<Bike | null> {
+    const newBike = await this.bikeModel.update(_id, data);
     return newBike;
   }
 }

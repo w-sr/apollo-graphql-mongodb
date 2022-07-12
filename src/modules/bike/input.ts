@@ -18,6 +18,24 @@ export class CreateBikeInput {
 }
 
 @InputType()
+export class UpdateBikeInput {
+  @Field(() => String, { nullable: true })
+  @Length(1, 50)
+  model: string;
+
+  @Field(() => String, { nullable: true })
+  @Length(1, 50)
+  location: string;
+
+  @Field(() => String, { nullable: true })
+  @Length(1, 50)
+  color: string;
+
+  @Field(() => Boolean, { nullable: true })
+  available: boolean;
+}
+
+@InputType()
 export class FilterBikeInput {
   @Field(() => String, { nullable: false })
   @Length(1, 50)
